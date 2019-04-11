@@ -2,7 +2,7 @@
 
 ## NOTE
 
-This project is currently not maintained. I haven't put any work on it over the last 3 years and with the current
+This project is currently not maintained. I haven't put any work on it since 2016 and with the current
 state of the API access to instagram and twitter, and the default settings for their geolocation features cree.py
 wouldn't be of much use. I will live the repository and site up for the time but I'd like to believe the tool served
 its purpose and I do not foresee working on this again. 
