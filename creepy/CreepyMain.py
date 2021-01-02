@@ -8,16 +8,17 @@ import os
 import logging
 import shelve
 import functools
-import urllib2
+import urllib3
 import webbrowser
 import pytz
 from distutils.version import StrictVersion
-from PyQt4.QtCore import QString, QThread, SIGNAL, QUrl, QDateTime, QDate, QRect, Qt
-from PyQt4.QtGui import QMainWindow, QApplication, QMessageBox, QFileDialog, QWidget, QScrollArea, QVBoxLayout, QIcon, \
+from PyQt5.QtCore import QThread, QUrl, QDateTime, QDate, QRect, Qt
+from PyQt5.QtGui import QIcon
+from PyQt5.QtWidgets import QMainWindow, QApplication, QMessageBox, QFileDialog, QWidget, QScrollArea, QVBoxLayout, \
     QTableWidgetItem, QAbstractItemView
-from PyQt4.QtGui import QHBoxLayout, QLabel, QLineEdit, QCheckBox, QPushButton, QStackedWidget, QGridLayout, QMenu, \
-    QPixmap
-from PyQt4.QtWebKit import QWebPage, QWebSettings
+from PyQt5.QtGui import QPixmap
+from PyQt5.QtWidgets import QLabel, QLineEdit, QCheckBox, QPushButton, QStackedWidget, QGridLayout, QMenu, QHBoxLayout
+from PyQt5.QtWebEngineWidgets import QWebEnginePage, QWebEngineSettings
 from dominate import document
 from ui.CreepyUI import Ui_CreepyMainWindow
 from yapsy.PluginManager import PluginManagerSingleton
@@ -57,10 +58,8 @@ logger.addHandler(guiLoggingHandler)
 # Capture stderr and stdout to a file
 sys.stdout = open(os.path.join(GeneralUtilities.getLogDir(), 'creepy_stdout.log'), 'w')
 sys.stderr = open(os.path.join(GeneralUtilities.getLogDir(), 'creepy_stderr.log'), 'w')
-try:
-    _fromUtf8 = QString.fromUtf8
-except AttributeError:
-    _fromUtf8 = lambda s: s
+
+_fromUtf8 = lambda s: s
 
 
 class MainWindow(QMainWindow):
@@ -127,6 +126,7 @@ class MainWindow(QMainWindow):
             logger.debug('Analysis thread finished for all targets.')
             # Emit the signal that we are done
             self.emit(SIGNAL('locations(PyQt_PyObject)'), self.project)
+        
 
     def __init__(self, parent=None):
         self.version = '1.5'
@@ -138,12 +138,12 @@ class MainWindow(QMainWindow):
         GeneralUtilities.getTempDir()
         self.projectsList = []
         self.currentProject = None
-        self.ui.mapWebPage = QWebPage()
+        self.ui.mapWebPage = QWebEnginePage()
         self.ui.mapWebPage.mainFrame().setUrl(QUrl(os.path.join(GeneralUtilities.getIncludeDir(), 'map.html')))
-        self.ui.mapWebPage.setLinkDelegationPolicy(QWebPage.DelegateAllLinks)
+        self.ui.mapWebPage.setLinkDelegationPolicy(QWebEnginePage.DelegateAllLinks)
         self.ui.mapWebPage.linkClicked.connect(self.linkClicked)
         self.ui.mapWebView.setPage(self.ui.mapWebPage)
-        self.ui.analysisWebPage = QWebPage()
+        self.ui.analysisWebPage = QWebEnginePage()
         self.ui.analysisWebView.setPage(self.ui.analysisWebPage)
         self.ui.menuView.addAction(self.ui.dockWProjects.toggleViewAction())
         self.ui.menuView.addAction(self.ui.dockWLocationsList.toggleViewAction())
@@ -191,7 +191,7 @@ class MainWindow(QMainWindow):
         result and the latest version number
         """
         try:
-            latestVersion = urllib2.urlopen('http://www.geocreepy.com/version.html').read().rstrip()
+            latestVersion = urllib3.urlopen('http://www.geocreepy.com/version.html').read().rstrip()
 
             updateCheckDialog = UpdateCheckDialog()
             updateCheckDialog.ui.versionsTableWidget.setHorizontalHeaderLabels(
@@ -214,7 +214,7 @@ class MainWindow(QMainWindow):
             updateCheckDialog.ui.versionsTableWidget.setItem(0, 4, QTableWidgetItem(latestVersion))
             updateCheckDialog.show()
             updateCheckDialog.exec_()
-        except Exception, err:
+        except Exception as err:
             if type(err) == 'string':
                 mes = err
             else:
@@ -223,13 +223,13 @@ class MainWindow(QMainWindow):
 
     def showFilterLocationsPointDialog(self):
         filterLocationsPointDialog = FilterLocationsPointDialog()
-        filterLocationsPointDialog.ui.mapPage = QWebPage()
+        filterLocationsPointDialog.ui.mapPage = QWebEnginePage()
         myPyObj = filterLocationsPointDialog.PyObj()
         filterLocationsPointDialog.ui.mapPage.mainFrame().addToJavaScriptWindowObject('myPyObj', myPyObj)
         filterLocationsPointDialog.ui.mapPage.mainFrame().setUrl(
             QUrl(os.path.join(GeneralUtilities.getIncludeDir(), 'mapSetPoint.html')))
-        filterLocationsPointDialog.ui.radiusUnitComboBox.insertItem(0, QString('km'))
-        filterLocationsPointDialog.ui.radiusUnitComboBox.insertItem(1, QString('m'))
+        filterLocationsPointDialog.ui.radiusUnitComboBox.insertItem(0, 'km')
+        filterLocationsPointDialog.ui.radiusUnitComboBox.insertItem(1, 'm')
         filterLocationsPointDialog.ui.radiusUnitComboBox.activated[str].connect(
             filterLocationsPointDialog.onUnitChanged)
         filterLocationsPointDialog.ui.webView.setPage(filterLocationsPointDialog.ui.mapPage)
@@ -368,22 +368,22 @@ class MainWindow(QMainWindow):
         mapFrame.evaluateJavaScript('showMarkers()')
 
     def addMarkerToMap(self, mapFrame, location):
-        mapFrame.evaluateJavaScript(QString('addMarker(' + str(location.latitude) + ',' + str(location.longitude) +
+        mapFrame.evaluateJavaScript('addMarker(' + str(location.latitude) + ',' + str(location.longitude) +
                                             ',\"' + location.infowindow + '\",\"' + location.plugin + '\",\"' +
-                                            location.accuracy + '\")'))
+                                            location.accuracy + '\")')
 
     def refreshMap(self, mapFrame):
-        mapFrame.evaluateJavaScript(QString('refreshMap()'))
+        mapFrame.evaluateJavaScript('refreshMap()')
 
     def centerMap(self, mapFrame, location):
         mapFrame.evaluateJavaScript(
-            QString('centerMap(' + str(location.latitude) + ',' + str(location.longitude) + ')'))
+            'centerMap(' + str(location.latitude) + ',' + str(location.longitude) + ')')
 
     def setMapZoom(self, mapFrame, level):
-        mapFrame.evaluateJavaScript(QString('setZoom(' + str(level) + ')'))
+        mapFrame.evaluateJavaScript('setZoom(' + str(level) + ')')
 
     def clearMarkers(self, mapFrame):
-        mapFrame.evaluateJavaScript(QString('clearMarkers()'))
+        mapFrame.evaluateJavaScript('clearMarkers()')
 
     def linkClicked(self, link):
         webbrowser.open(link.toEncoded(), new=1)
@@ -436,7 +436,7 @@ class MainWindow(QMainWindow):
                 fileobj.write(csv_string)
                 fileobj.close()
                 self.ui.statusbar.showMessage(self.trUtf8('Project Locations have been exported successfully'))
-            except Exception, err:
+            except Exception as err:
                 logger.error(err)
                 self.ui.statusbar.showMessage(self.trUtf8('Error saving the export.'))
 
@@ -504,7 +504,7 @@ class MainWindow(QMainWindow):
                 fileobj.write(kml_string)
                 fileobj.close()
                 self.ui.statusbar.showMessage(self.trUtf8('Project Locations have been exported successfully'))
-            except Exception, err:
+            except Exception as err:
                 logger.error(err)
                 self.ui.statusbar.showMessage(self.trUtf8('Error saving the export.'))
 
@@ -561,7 +561,7 @@ class MainWindow(QMainWindow):
             else:
                 analysisDocument = self.currentProject.analysisDocument
         analysisFrame = self.ui.analysisWebPage.mainFrame()
-        analysisFrame.setHtml(QString(unicode(analysisDocument)),
+        analysisFrame.setHtml(unicode(analysisDocument),
                               QUrl('file://' + os.path.join(os.getcwd(), 'include/')))
 
     def presentLocations(self, locations):
@@ -795,8 +795,8 @@ class MainWindow(QMainWindow):
 
         def searchForPlace():
             placeProjectWizard.ui.mapPage.mainFrame().evaluateJavaScript(
-                QString('searchForAddress(\"' + unicode(placeProjectWizard.ui.searchAddressInput.text().toUtf8()) +
-                        '\");'))
+                'searchForAddress(\"' + unicode(placeProjectWizard.ui.searchAddressInput.text().toUtf8()) +
+                        '\");')
 
         placeProjectWizard = PlaceProjectWizard()
         placeProjectWizard.ProjectWizardPluginListModel = ProjectWizardPluginListModel(
@@ -804,12 +804,12 @@ class MainWindow(QMainWindow):
         placeProjectWizard.ui.placeProjectAvailablePluginsListView.setModel(
             placeProjectWizard.ProjectWizardPluginListModel)
 
-        placeProjectWizard.ui.mapPage = QWebPage()
+        placeProjectWizard.ui.mapPage = QWebEnginePage()
         placeProjectWizard.ui.mapPage.mainFrame().addToJavaScriptWindowObject('myPyObj', placeProjectWizard.myPyObj)
         placeProjectWizard.ui.mapPage.mainFrame().setUrl(
             QUrl(os.path.join(GeneralUtilities.getIncludeDir(), 'mapSetPoint.html')))
-        placeProjectWizard.ui.radiusUnitComboBox.insertItem(0, QString('km'))
-        placeProjectWizard.ui.radiusUnitComboBox.insertItem(1, QString('m'))
+        placeProjectWizard.ui.radiusUnitComboBox.insertItem(0, 'km')
+        placeProjectWizard.ui.radiusUnitComboBox.insertItem(1, 'm')
         placeProjectWizard.ui.radiusUnitComboBox.activated[str].connect(
             placeProjectWizard.onUnitChanged)
         placeProjectWizard.ui.searchAddressButton.clicked.connect(searchForPlace)
@@ -854,7 +854,7 @@ class MainWindow(QMainWindow):
             projectObject = shelve.open(projectFile)
             try:
                 rootNode.addChild(projectObject['project'])
-            except Exception, err:
+            except Exception as err:
                 logger.error('Could not read stored project from file')
                 logger.error(err)
         self.projectTreeModel = ProjectTreeModel(rootNode)

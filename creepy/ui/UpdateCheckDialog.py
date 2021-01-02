@@ -3,11 +3,11 @@
 # Form implementation generated from reading ui file '.\updateCheckDialog.ui'
 #
 # Created: Fri Jan 31 15:29:49 2014
-#      by: PyQt4 UI code generator 4.9.4
+#      by: PyQt5 UI code generator 4.9.4
 #
 # WARNING! All changes made in this file will be lost!
 
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore, QtGui
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8

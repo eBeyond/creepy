@@ -3,11 +3,11 @@
 # Form implementation generated from reading ui file 'gui/placeProjectWizard.ui'
 #
 # Created: Wed Oct 14 17:30:49 2015
-#      by: PyQt4 UI code generator 4.11.3
+#      by: PyQt5 UI code generator 4.11.3
 #
 # WARNING! All changes made in this file will be lost!
 
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore, QtGui
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -192,7 +192,7 @@ class Ui_placeProjectWizard(object):
         self.placeProjectWizardPage5.setTitle(_translate("placeProjectWizard", "Step 4  - Finalize Project", None))
         self.placeProjectWizardPage5.setSubTitle(_translate("placeProjectWizard", "Click Finish to save the Project Configuration ", None))
 
-from PyQt4 import QtWebKit
+from PyQt5 import QtWebKit
 import creepy_resources_rc
 
 if __name__ == "__main__":

@@ -3,10 +3,10 @@
 import os
 import logging
 import urllib
-from urlparse import urlparse, parse_qs
+from urllib.parse import urlparse, parse_qs
 
 import pytz
-from PyQt4.QtGui import QLabel, QLineEdit, QWizard, QWizardPage, QVBoxLayout, QMessageBox, QPushButton
+from PyQt5.QtWidgets import QLabel, QLineEdit, QWizard, QWizardPage, QVBoxLayout, QMessageBox, QPushButton
 from instagram.client import InstagramAPI
 from models.InputPlugin import InputPlugin
 from utilities import GeneralUtilities, QtHandler
@@ -36,7 +36,7 @@ class Instagram(InputPlugin):
         labels_config = self.getConfigObj(self.name + '.labels')
         try:
             self.labels = labels_config['labels']
-        except Exception, err:
+        except Exception as err:
             self.labels = None
             logger.error('Could not load the labels file for the  ' + self.name + ' plugin .')
             logger.error(err)
@@ -53,7 +53,7 @@ class Instagram(InputPlugin):
         try:
             self.api.user()
             return True, ""
-        except Exception, err:
+        except Exception as err:
             return False, err.message
 
     def searchForTargets(self, search_term):
@@ -77,7 +77,7 @@ class Instagram(InputPlugin):
                     urllib.urlretrieve(i.profile_picture, temp_file)
                 possibleTargets.append(target)
             logger.debug(str(len(possibleTargets)) + ' possible targets were found matching the search query')
-        except Exception, err:
+        except Exception as err:
             logger.error('Error searching for targets with instagram plugin.')
             logger.error(err)
         return possibleTargets
@@ -116,7 +116,7 @@ class Instagram(InputPlugin):
                     loc = {}
                     loc['plugin'] = 'instagram'
                     loc['username'] = i.user.username
-                    loc['context'] = i.caption.text if i.caption else unicode('No Caption', 'utf-8')
+                    loc['context'] = i.caption.text if i.caption else str('No Caption', 'utf-8')
                     loc['infowindow'] = self.constructContextInfoWindow(i, i.user.username)
                     loc['date'] = pytz.utc.localize(i.created_time)
                     loc['lat'] = i.location.point.latitude
@@ -129,7 +129,7 @@ class Instagram(InputPlugin):
                         loc['accuracy'] = 'high'
                     locations_list.append(loc)
             logger.debug(str(len(locations_list)) + ' photos have been retrieved')
-        except Exception, err:
+        except Exception as err:
             logger.error(err)
             logger.error('Error getting locations from instagram plugin')
         return locations_list
@@ -146,7 +146,7 @@ class Instagram(InputPlugin):
                     loc = {}
                     loc['plugin'] = 'instagram'
                     loc['username'] = i.user.username
-                    loc['context'] = i.caption.text if i.caption else unicode('No Caption', 'utf-8')
+                    loc['context'] = i.caption.text if i.caption else str('No Caption', 'utf-8')
                     loc['infowindow'] = self.constructContextInfoWindow(i, target['targetUsername'])
                     loc['date'] = pytz.utc.localize(i.created_time)
                     loc['lat'] = i.location.point.latitude
@@ -160,7 +160,7 @@ class Instagram(InputPlugin):
                     loc['accuracy'] = 'high'
                     locations_list.append(loc)
             logger.debug('{0} locations have been retrieved'.format(len(locations_list)))
-        except Exception, err:
+        except Exception as err:
             logger.error(err)
             logger.error('Error getting locations from instagram plugin')
         return locations_list, None
@@ -205,7 +205,7 @@ class Instagram(InputPlugin):
                         access_token = api.exchange_code_for_access_token(code=c)
                         self.options_string['hidden_access_token'] = access_token[0]
                         self.saveConfiguration(self.config)
-                    except Exception, err:
+                    except Exception as err:
                         logger.error(err)
                         self.showWarning('Error Getting Access Token',
                                          'Please verify that the link you pasted was correct. '
@@ -214,14 +214,14 @@ class Instagram(InputPlugin):
                     self.showWarning('Error Getting Access Token',
                                      'Please verify that the link you pasted was correct. Try running the wizard again.')
 
-        except Exception, err:
+        except Exception as err:
             logger.error(err)
             self.showWarning('Error', 'Error was {0}'.format(err))
 
     def parseRedirectUrl(self, link):
         try:
             return parse_qs(urlparse(link).query)['code'][0]
-        except Exception, err:
+        except Exception as err:
             logger.error(err)
             return None
 
@@ -229,8 +229,8 @@ class Instagram(InputPlugin):
         QMessageBox.warning(self.wizard, title, text, None)
 
     def constructContextInfoWindow(self, photo, username):
-        html = unicode(self.options_string['infowindow_html'], 'utf-8')
-        caption = photo.caption.text if photo.caption else unicode('No Caption', 'utf-8')
+        html = str(self.options_string['infowindow_html'], 'utf-8')
+        caption = photo.caption.text if photo.caption else str('No Caption', 'utf-8')
         return html.replace('@TEXT@', caption).replace("@DATE@", pytz.utc.localize(photo.created_time).strftime(
             '%Y-%m-%d %H:%M:%S %z')).replace('@PLUGIN@', u'instagram').replace('@LINK@', photo.link).replace(
             '@MEDIA_URL@', photo.get_low_resolution_url()).replace('@USERNAME@', username)

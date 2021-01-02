@@ -1,18 +1,15 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-from PyQt4.QtGui import QWizard, QMessageBox, QWidget, QScrollArea, QLineEdit, QLabel, QVBoxLayout, QCheckBox, \
+from PyQt5.QtWidgets import QWizard, QMessageBox, QWidget, QScrollArea, QLineEdit, QLabel, QVBoxLayout, QCheckBox, \
     QGridLayout
-from PyQt4.QtCore import QObject, pyqtSlot, QString
+from PyQt5.QtCore import QObject, pyqtSlot
 from models.PluginConfigurationListModel import PluginConfigurationListModel
 from models.InputPlugin import InputPlugin
 from yapsy.PluginManager import PluginManagerSingleton
 from ui.PlaceProjectWizard import Ui_placeProjectWizard
 from utilities import GeneralUtilities
 
-try:
-    _fromUtf8 = QString.fromUtf8
-except AttributeError:
-    _fromUtf8 = lambda s: s
+_fromUtf8 = lambda s: s
 
 
 class PlaceProjectWizard(QWizard):

@@ -3,11 +3,11 @@
 # Form implementation generated from reading ui file '.\filterLocationsPointDialog.ui'
 #
 # Created: Fri Jan 31 15:33:25 2014
-#      by: PyQt4 UI code generator 4.9.4
+#      by: PyQt5 UI code generator 4.9.4
 #
 # WARNING! All changes made in this file will be lost!
 
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore, QtGui
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -87,7 +87,7 @@ class Ui_FilteLocationsPointDialog(object):
         self.titleLabel.setText(QtGui.QApplication.translate("FilteLocationsPointDialog", "<html><head/><body><p><span style=\" font-size:9pt;\">Drop a </span><span style=\" font-size:9pt; font-weight:600; color:#ff0000;\">pin</span><span style=\" font-size:9pt;\"> on the map for your point of interest</span></p></body></html>", None, QtGui.QApplication.UnicodeUTF8))
         self.radiusLabel.setText(QtGui.QApplication.translate("FilteLocationsPointDialog", "<html><head/><body><p><span style=\" font-size:9pt;\">Distance from the POI :</span></p></body></html>", None, QtGui.QApplication.UnicodeUTF8))
 
-from PyQt4 import QtWebKit
+from PyQt5 import QtWebKit
 import creepy_resources_rc
 
 if __name__ == "__main__":

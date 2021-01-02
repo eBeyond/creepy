@@ -3,16 +3,19 @@ import py2exe, sys, os
 
 sys.argv.append('py2exe')
 
-includes = ["sip",
-            "distutils",
-            "PyQt4.QtNetwork",
-            "tweepy",
-            "flickrapi",
-            "instagram",
-            "googleapiclient.discovery",
-            "oauth2client.client",
-            "dateutil.parser",
-            "dbhash"]
+includes = [
+    "sip",
+    "distutils",
+    "PyQt5.QtNetwork",
+    "tweepy",
+    "urllib3"
+    "flickrapi",
+    "instagram",
+    "googleapiclient.discovery",
+    "oauth2client.client",
+    "dateutil.parser",
+    "dbhash"
+]
 
 DATA = [
     ('imageformats', ['C:\\Users/ikakavas/.virtualenvs/creepy/Lib/site-packages/PyQt4/plugins/imageformats/qjpeg4.dll',
@@ -21,8 +24,8 @@ DATA = [
                       'C:\\Users/ikakavas/.virtualenvs/creepy/Lib/site-packages/PyQt4/plugins/imageformats/qmng4.dll',
                       'C:\\Users/ikakavas/.virtualenvs/creepy/Lib/site-packages/PyQt4/plugins/imageformats/qsvg4.dll',
                       'C:\\Users/ikakavas/.virtualenvs/creepy/Lib/site-packages/PyQt4/plugins/imageformats/qtiff4.dll'
-    ]
-    ),
+                      ]
+     ),
     'include/cacerts.txt'
 ]
 
@@ -32,11 +35,16 @@ setup(
     author='Yiannis Kakavas',
     author_email='jkakavas@gmail.com',
     options={
-    "py2exe": {
-    "includes": includes
-    }
+        "py2exe": {
+            "includes": includes
+        }
     },
-    windows=[{'script': "CreepyMain.py", 'icon_resource': [(1, "include/creepy.ico")]}],
+    windows=[
+        {
+            'script': "CreepyMain.py",
+            'icon_resource': [(1, "include/creepy.ico")]
+        }
+    ],
     zipfile=None,
     data_files=DATA,
 )
